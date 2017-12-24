@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,12 +55,20 @@ public class LoginActivity extends AppCompatActivity  {
     private EditText txtPassword;
     private Button btnLogin;
     private Button btnRegister;
-
+    private Button btnGuest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        btnGuest = (Button)findViewById(R.id.btnGuest) ;
+        btnGuest.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Intent guestIntent = new Intent(LoginActivity.this,NavigationActivity.class);
+                LoginActivity.this.startActivity(guestIntent);
+            }
+        });
 
         //criar um intent para o botao de registo
         btnLogin = (Button)findViewById(R.id.btnLogin);
@@ -74,7 +83,6 @@ public class LoginActivity extends AppCompatActivity  {
                 //set up references to String
                 final String username = txtUsername.getText().toString();
                 final String password = txtPassword.getText().toString();
-
                 //primeiro precisamos de um responseListener
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
@@ -88,12 +96,12 @@ public class LoginActivity extends AppCompatActivity  {
                                 String name = jsonResponse.getString("name");
 
                                 //criacao do intent
-                                Intent loginIntent = new Intent(LoginActivity.this,NavigationActivity.class);
+                                Intent loginIntent = new Intent(LoginActivity.this ,NavigationActivity.class);
                                 //passamos parametross que queremos
                                 loginIntent.putExtra("name",name);
                                 loginIntent.putExtra("username",username);
                                 //começamos o intent
-                                LoginActivity.this.startActivity(loginIntent);
+                                startActivity(loginIntent);
                             }
 
                         else {
@@ -112,6 +120,8 @@ public class LoginActivity extends AppCompatActivity  {
                 LoginRequest loginRequest = new LoginRequest(username, password , responseListener );
                 RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 queue.add(loginRequest);
+                Log.i("usr : ",username);
+                Log.i("pswr : ",password);
             }
         });
         //criar um intent para o botao de registo

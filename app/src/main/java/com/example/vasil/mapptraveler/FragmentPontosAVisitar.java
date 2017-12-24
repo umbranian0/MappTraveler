@@ -23,7 +23,10 @@ public class FragmentPontosAVisitar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_pontos_avisitar, container, false);
+        View v =  inflater.inflate(R.layout.fragment_pontos_a_visitar, container, false);
+
+
+        return v;
     }
 
 }
