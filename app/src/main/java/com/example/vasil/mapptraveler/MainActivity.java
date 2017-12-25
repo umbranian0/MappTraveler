@@ -2,10 +2,8 @@ package com.example.vasil.mapptraveler;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,23 +13,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class NavigationActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity
 
-        implements NavigationView.OnNavigationItemSelectedListener {
-    //vamos buscar os dados da outra atividade para esta
-    Intent intent = getIntent();
-    String nome = intent.getStringExtra("name");
-    String username = intent.getStringExtra("username");
-    String message = nome + "bem vondo ao MAPP TRAVELER";
+        //Note : OnFragmentInteractionListener of all the fragments
+        implements
+        /*Why do we need it ?
+        Basically, I use to set the toolbar title when i toggle between different fragments.*/
+        FragmentoPontosAVisitar.OnFragmentInteractionListener,
+        FragmentMaisVisitados.OnFragmentInteractionListener,
+        FragmentMap.OnFragmentInteractionListener,
+
+        NavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
+        setContentView(R.layout.activity_main);
 
-        //teste
-
-
+       /* //teste
+        //vamos buscar os dados da outra atividade para esta
+        Intent intent = getIntent();
+        String nome = intent.getStringExtra("name");
+        String username = intent.getStringExtra("username");
+        String message = nome + "bem vondo ao MAPP TRAVELER";
+*/
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -44,6 +50,16 @@ public class NavigationActivity extends AppCompatActivity
         //acesso ao menu de navehação
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //NOTE:  Checks first item in the navigation drawer initially
+        navigationView.setCheckedItem(R.id.fragmentPontosAVisitar);
+
+        //NOTE:  Open fragment1 initially.
+        FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
+        FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
+        fragmentoTransaction.commit();
     }
 
     @Override
@@ -84,24 +100,50 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        //NOTE: creating fragment object
+     //   Fragment fragment = null;
+
         if (id == R.id.fragmentPontosAVisitar) {
-            setTitle("Pontos A Visitar");
-            FragmentPontosAVisitar fragmento = new FragmentPontosAVisitar();
-            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentoTransaction.replace(R.id.frame,fragmento,"fragmento1");
-            fragmentoTransaction.commit();
+      //      fragment = new FragmentoPontosAVisitar();
             // Handle the camera action
+            setTitle("Pontos A Visitar");
+            FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
+            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
+            fragmentoTransaction.commit();
         }
-        else if (id == R.id.fragmentPontosAVisitar) {
-
-        } else if (id == R.id.fragmentMaisVisitados) {
-
-        } else if (id == R.id.FragmentMap) {
-
+        else if (id == R.id.fragmentMaisVisitados) {
+        //    fragment = new FragmentMaisVisitados();
+            setTitle("Pontos mais Visitados");
+            FragmentMaisVisitados fragmento = new FragmentMaisVisitados();
+            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment mais visitados");
+            fragmentoTransaction.commit();
         }
-
+        else if (id == R.id.fragmentMap) {
+        //    fragment = new FragmentMap();
+            setTitle(" MAPA ");
+            FragmentMap fragmento = new FragmentMap();
+            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
+            fragmentoTransaction.commit();
+        }
+        // Cidigo de Mudança de Fragmento
+        /*if(fragment != null){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.frame, fragment);
+            ft.commit();
+        }*/
+        //NOTE:  Closing the drawer after selecting
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    public void onFragmentInteraction(String title) {
+// NOTE:  Code to replace the toolbar title based current visible fragment
+        getSupportActionBar().setTitle(title);
+    }
+
 }

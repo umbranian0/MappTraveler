@@ -22,8 +22,23 @@ public class FragmentMap extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_map, container, false);
+        View view= inflater.inflate(R.layout.fragment_fragment_map, container, false);
+
+        // NOTE : We are calling the onFragmentInteraction() declared in the MainActivity
+        // ie we are sending "Fragment 1" as title parameter when fragment1 is activated
+
+     /*   if (mListener != null) {
+            mListener.onFragmentInteraction("Fragment Pontos a visistar");
+        }
+        */
+
+        // Here we will can create click listners etc for all the gui elements on the fragment.
+        // For eg: Button btn1= (Button) view.findViewById(R.id.frag1_btn1);
+        // btn1.setOnclickListener(...
+
+        return view;
     }
 
+    public interface OnFragmentInteractionListener {
+    }
 }

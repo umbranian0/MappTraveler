@@ -22,8 +22,19 @@ public class FragmentoPontosAVisitar extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
-    }
+        View view= inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
 
+        // NOTE : We are calling the onFragmentInteraction() declared in the MainActivity
+        // ie we are sending "Fragment 1" as title parameter when fragment1 is activated
+
+     /*   if (mListener != null) {
+            mListener.onFragmentInteraction("Fragment Pontos a visistar");
+        }
+        */
+
+
+        return view;
+    }
+    public interface OnFragmentInteractionListener {
+    }
 }

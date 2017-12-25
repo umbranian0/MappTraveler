@@ -1,36 +1,14 @@
 package com.example.vasil.mapptraveler;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,11 +16,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -65,8 +38,8 @@ public class LoginActivity extends AppCompatActivity  {
         btnGuest = (Button)findViewById(R.id.btnGuest) ;
         btnGuest.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                Intent guestIntent = new Intent(LoginActivity.this,NavigationActivity.class);
-                LoginActivity.this.startActivity(guestIntent);
+                Intent guestIntent = new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(guestIntent);
             }
         });
 
@@ -96,7 +69,7 @@ public class LoginActivity extends AppCompatActivity  {
                                 String name = jsonResponse.getString("name");
 
                                 //criacao do intent
-                                Intent loginIntent = new Intent(LoginActivity.this ,NavigationActivity.class);
+                                Intent loginIntent = new Intent(LoginActivity.this ,MainActivity.class);
                                 //passamos parametross que queremos
                                 loginIntent.putExtra("name",name);
                                 loginIntent.putExtra("username",username);
@@ -133,7 +106,7 @@ public class LoginActivity extends AppCompatActivity  {
                 //criacao do intent
                 Intent registerIntent = new Intent(LoginActivity.this,RegisterActivity.class);
                 //começamos o intent
-                LoginActivity.this.startActivity(registerIntent);
+                startActivity(registerIntent);
             }
         });
 
