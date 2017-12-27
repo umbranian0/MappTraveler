@@ -6,24 +6,19 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Pontos A Visitar"
+        android:textSize="20sp" />
+
     <ListView
         android:id="@+id/listaFragmentos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="461dp">
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="Pontos A Visitar"
-            android:textSize="20sp" />
-    </RelativeLayout>
 
 </RelativeLayout>
