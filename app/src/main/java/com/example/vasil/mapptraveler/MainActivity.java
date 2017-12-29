@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity
         Basically, I use to set the toolbar title when i toggle between different fragments.*/
         FragmentoPontosAVisitar.OnFragmentInteractionListener,
         FragmentMaisVisitados.OnFragmentInteractionListener,
-        FragmentMap.OnFragmentInteractionListener,
 
         NavigationView.OnNavigationItemSelectedListener {
 

@@ -11,12 +11,12 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"
         tools:context="com.example.vasil.mapptraveler.MapsActivity" />
 
     <RadioGroup
+        android:id="@+id/tiposMapa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/mapView"
@@ -57,12 +57,18 @@
             android:layout_weight="1"
             android:text="Densidade" />
 
-        <RadioButton
-            android:id="@+id/btnTempo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Tempo" />
     </RadioGroup>
+
+    <AutoCompleteTextView
+        android:id="@+id/txtPesquisa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="14dp"
+        android:background="@android:color/white"
+        android:hint="Pesquisar"
+        android:padding="10dp" />
 
 </RelativeLayout>
