@@ -22,9 +22,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -68,7 +70,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private static final float DEFAULT_ZOOM = 15f;
     private FusedLocationProviderClient mFusedLocationProviderClient = null;
     private RadioGroup tipoMapa;
-
+    private ImageView imgLoc ;
     //widgets
     private EditText mSearchText;
 
@@ -82,11 +84,11 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         //criar uma view
         View view = inflater.inflate(R.layout.fragment_fragment_map, container, false);
+        getLocationPermission();
         //Vamos trazer os RADIO group
         tipoMapa = (RadioGroup) view.findViewById(R.id.tiposMapa);
         mSearchText = (EditText)view.findViewById(R.id.inputSearch);
-        //iniucia o mapa
-        initMap();
+        imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
 
         return view;
 
@@ -98,8 +100,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
         //esta funçao serve para mudar o tipo de mapa
         changeMapType(view);
-        getLocationPermission();
-        init();
 
     }
     //---------------------Search
@@ -116,10 +116,20 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                         || event.getAction() == KeyEvent.KEYCODE_ENTER){
                     //metodo para pesquisar
                     geoLocate();
+
                 }
                 return false;
             }
         });
+        imgLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"clicou no icon de sua localizacao");
+                getDeviceLocation();
+            }
+        });
+        //esconde teclado depois de pesquisar
+        esconderTeclado();
     }
 //para pesquisar
     private void geoLocate() {
@@ -139,6 +149,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             Address adress = list.get(0);
 
             Log.i(TAG,"location found : " + adress.toString());
+            //move a camera para a pesquisa
+            moveCamera(new LatLng(adress.getLatitude(),adress.getLongitude()),DEFAULT_ZOOM,adress.getAddressLine(0));
         }
     }
 
@@ -162,7 +174,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                             Log.d(TAG, "found location");
                             Location currentLocation = (Location) task.getResult();
                             //mover a camera para este resultado
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM,
+                                    "Minha Localizacao");
 
                         } else {
                             Log.d(TAG, "unable to found location");
@@ -178,12 +191,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     }
 
-    //metodo para mover a camera
-    private void moveCamera(LatLng latLng, float zoom) {
-        Log.d(TAG, "movind the camera to : tat " + latLng.latitude + " | long : " + latLng.longitude);
-        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-    }
-
 
 
     //localiza o no mapa
@@ -194,9 +201,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(FragmentMap.this);
     }
 
+
     @Override
     public void onMapReady(GoogleMap map) {
-        Toast.makeText(FragmentMap.this.getActivity(), "MAPA esta pronto ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(FragmentMap.this.getActivity(), "MAPA", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Map is Ready");
         nMap = map;
 
@@ -211,9 +219,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
                 return;
             }
-            Log.i("permission","parmission"+mLocationPermissionGranted);
+            Log.i("permission","parmission == "+mLocationPermissionGranted);
+
             nMap.setMyLocationEnabled(true);
-            nMap.getUiSettings().setMyLocationButtonEnabled(true);
+            nMap.getUiSettings().setMyLocationButtonEnabled(false);
 
             init();
         }else{
@@ -223,6 +232,29 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
 
     }
+
+
+    //metodo para mover a camera
+    private void moveCamera(LatLng latLng, float zoom , String title) {
+        Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
+        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        //adicionar marker de uma pesquisa
+        MarkerOptions options = new MarkerOptions()
+                .position(latLng)
+                .title(title);
+
+        //So cria marcador se for outra localização sem ser a minha
+        if(!title.equals("Minha Localizacao")){
+            nMap.addMarker(options);
+
+        }
+
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado();
+    }
+
+
     //funçao para mudar o tipo de mapa
     public void changeMapType(View v) {
 
@@ -256,21 +288,31 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
     //-------ver permissoes do android
     private void getLocationPermission(){
+        Log.d(TAG, "getLocationPermission: getting location permissions");
         String [] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION };
+
         if(ContextCompat.checkSelfPermission(this.getContext(),
                 FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+
             if(ContextCompat.checkSelfPermission(this.getContext(),
                     COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                 mLocationPermissionGranted = true;
-            }else{
+                initMap();
+            }
+            else{
                 ActivityCompat.requestPermissions((Activity)this.getContext(),
                         permissions,LOCATION_PERMISSION_REQUEST_CODE);
             }
+        }else{
+            ActivityCompat.requestPermissions((Activity)this.getContext(),
+                    permissions,
+                    LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: called.");
         mLocationPermissionGranted = false;
 
         //vamos ver o request code
@@ -279,9 +321,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 if (grantResults.length > 0) {
                     //verifica todas as permissoes
                     for(int i = 0 ; i< grantResults.length;i++){
-                        if(grantResults[i] == PackageManager.PERMISSION_GRANTED){
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
                             mLocationPermissionGranted = false;
-
+                            Log.d(TAG, "onRequestPermissionsResult: permission failed");
                             return;
                         }
                     }
@@ -294,5 +336,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
+    private void esconderTeclado(){
+        getActivity().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
 }
