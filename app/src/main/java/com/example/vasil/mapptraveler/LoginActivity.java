@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity  {
                     @Override
                     public void onResponse(String response) {
                         try {
+                            Log.d("login intent",response);
                             JSONObject jsonResponse = new JSONObject(response);
                             //precisamos de saber se foi bem sucedido
                             boolean success = jsonResponse.getBoolean("success");

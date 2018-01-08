@@ -81,7 +81,7 @@
             android:layout_margin="10dp"
             android:src="@android:drawable/ic_menu_search" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/inputSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

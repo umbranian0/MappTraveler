@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,33 +16,22 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -72,7 +60,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private RadioGroup tipoMapa;
     private ImageView imgLoc ;
     //widgets
-    private EditText mSearchText;
+    private AutoCompleteTextView mSearchText;
 
     public FragmentMap() {
         // Required empty public constructor
@@ -87,7 +75,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         getLocationPermission();
         //Vamos trazer os RADIO group
         tipoMapa = (RadioGroup) view.findViewById(R.id.tiposMapa);
-        mSearchText = (EditText)view.findViewById(R.id.inputSearch);
+        mSearchText = (AutoCompleteTextView) view.findViewById(R.id.inputSearch);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
 
         return view;
@@ -219,7 +207,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
                 return;
             }
-            Log.i("permission","parmission == "+mLocationPermissionGranted);
 
             nMap.setMyLocationEnabled(true);
             nMap.getUiSettings().setMyLocationButtonEnabled(false);

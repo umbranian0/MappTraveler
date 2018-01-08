@@ -24,13 +24,7 @@ public class FragmentoPontosAVisitar extends Fragment {
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
 
-        // NOTE : We are calling the onFragmentInteraction() declared in the MainActivity
-        // ie we are sending "Fragment 1" as title parameter when fragment1 is activated
 
-     /*   if (mListener != null) {
-            mListener.onFragmentInteraction("Fragment Pontos a visistar");
-        }
-        */
 
 
         return view;
