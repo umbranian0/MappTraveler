@@ -6,13 +6,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FragmentoPontosAVisitar extends Fragment {
-
+    //atributos
+    ListView lista;
+    String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
+    int[] imagens = {R.drawable.castelo,
+            R.drawable.palacio,
+            R.drawable.igreja};
 
     public FragmentoPontosAVisitar() {
         // Required empty public constructor
@@ -24,17 +30,14 @@ public class FragmentoPontosAVisitar extends Fragment {
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
 
-        // NOTE : We are calling the onFragmentInteraction() declared in the MainActivity
-        // ie we are sending "Fragment 1" as title parameter when fragment1 is activated
+        lista = (ListView) view.findViewById(R.id.listaFragmentos);
 
-     /*   if (mListener != null) {
-            mListener.onFragmentInteraction("Fragment Pontos a visistar");
-        }
-        */
-
+        MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens);
 
         return view;
     }
+
     public interface OnFragmentInteractionListener {
     }
+
 }
