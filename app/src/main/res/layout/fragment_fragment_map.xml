@@ -85,8 +85,8 @@
             android:id="@+id/inputSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/ic_magnify"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
             android:background="@null"
             android:hint="Introduza a morada ou Cod postal"
             android:imeOptions="actionSearch"
@@ -101,6 +101,15 @@
         android:layout_alignEnd="@+id/searchLayout"
         android:layout_below="@+id/searchLayout"
         android:src="@android:drawable/ic_menu_mylocation" />
+
+    <ImageView
+        android:id="@+id/placePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imgLoc"
+        android:layout_below="@+id/imgLoc"
+        android:layout_marginTop="15dp"
+        android:src="@android:drawable/ic_input_add" />
 
 
 </RelativeLayout>

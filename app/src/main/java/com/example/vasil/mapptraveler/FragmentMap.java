@@ -59,9 +59,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationProviderClient = null;
     private RadioGroup tipoMapa;
     private ImageView imgLoc ;
+    private ImageView btnPlacePicker;
     //widgets
     private AutoCompleteTextView mSearchText;
-
+  //  private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     public FragmentMap() {
         // Required empty public constructor
     }
@@ -76,6 +77,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
         //Vamos trazer os RADIO group
         tipoMapa = (RadioGroup) view.findViewById(R.id.tiposMapa);
         mSearchText = (AutoCompleteTextView) view.findViewById(R.id.inputSearch);
+        btnPlacePicker = (ImageView)view.findViewById(R.id.placePicker);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
 
         return view;
@@ -95,6 +97,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     private void init(){
         Log.d(TAG,"initializing search etc...");
 
+        //para fazer pesquisas de espaços
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -109,6 +112,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 return false;
             }
         });
+
+        //para recebentrar n«a loc do utilizador
         imgLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,8 +121,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 getDeviceLocation();
             }
         });
+/*
+        //para adicionar um sitio
+        btnPlacePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int PLACE_PICKER_REQUEST = 1;
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+
+
+            }
+        });
+*/
         //esconde teclado depois de pesquisar
         esconderTeclado();
+
     }
 //para pesquisar
     private void geoLocate() {
@@ -139,6 +157,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
             Log.i(TAG,"location found : " + adress.toString());
             //move a camera para a pesquisa
             moveCamera(new LatLng(adress.getLatitude(),adress.getLongitude()),DEFAULT_ZOOM,adress.getAddressLine(0));
+
         }
     }
 
@@ -324,6 +343,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     }
 
     private void esconderTeclado(){
+        this.getView().clearFocus();
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }

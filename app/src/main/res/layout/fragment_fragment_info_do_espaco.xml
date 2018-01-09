@@ -22,14 +22,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="15dp"
         android:ems="10"
         android:gravity="center"
         android:hint="nome"
         android:inputType="none" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/txtDescricao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
