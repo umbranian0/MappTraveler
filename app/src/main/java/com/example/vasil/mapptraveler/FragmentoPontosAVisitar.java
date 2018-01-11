@@ -17,6 +17,7 @@ import android.widget.ListView;
  */
 public class FragmentoPontosAVisitar extends Fragment {
     //atributos
+    ViewGroup v;
     ListView lista;
     Toolbar t;
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
@@ -37,7 +38,7 @@ public class FragmentoPontosAVisitar extends Fragment {
         lista = (ListView) view.findViewById(R.id.listaFragmentos);
 
         t = (Toolbar) view.findViewById(R.id.toolbar);
-
+        v = container;
         MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens);
 
         lista.setAdapter(myAdapter);
@@ -51,6 +52,10 @@ public class FragmentoPontosAVisitar extends Fragment {
                 Bundle b1 = new Bundle();
                 b1.putString("nomelocal",nomesLocais[i]);
                 b1.putInt("imagensLocal",imagens[i]);
+
+                if(v!=null){
+                    v.removeAllViews();
+                }
 
                 FragmentInfoDoEspaco fragmento = new FragmentInfoDoEspaco();
                 //envio o argumento com o fragmento

@@ -20,19 +20,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vasil.mapptraveler.models.PlaceInfo;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,27 +53,37 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.android.gms.location.places.Places.GeoDataApi;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentMap extends Fragment implements OnMapReadyCallback {
+public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener{
     //api key da google
     private GoogleMap nMap;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static String TAG = "MapFragment";
     private static String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-
+    //2 coordenadas random do mundo
+    private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(-40,-168),new LatLng(71,136));
     //atrubutos
+    //atributos do googleapi
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private GoogleApiClient mGoogleApiClient;
     private Boolean mLocationPermissionGranted = false;
+    private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
+    private PlaceInfo mPlace;
+    //widgets
     private static final float DEFAULT_ZOOM = 15f;
-    private FusedLocationProviderClient mFusedLocationProviderClient = null;
     private RadioGroup tipoMapa;
     private ImageView imgLoc ;
     private ImageView btnPlacePicker;
-    //widgets
     private AutoCompleteTextView mSearchText;
+
+
   //  private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     public FragmentMap() {
         // Required empty public constructor
@@ -96,6 +118,21 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     //criar um init para a pesquisa
     private void init(){
         Log.d(TAG,"initializing search etc...");
+        //google api client
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this.getContext())
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this.getActivity(), this)
+                .build();
+
+        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
+
+        //listener for fused location client
+        mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this.getContext(), mGoogleApiClient , LAT_LNG_BOUNDS  , null);
+
+        //adaptamos o search input para um place autocomplete adapter
+        mSearchText.setAdapter(mPlaceAutocompleteAdapter);
 
         //para fazer pesquisas de espaços
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -121,7 +158,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
                 getDeviceLocation();
             }
         });
-/*
+
         //para adicionar um sitio
         btnPlacePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +169,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
             }
         });
-*/
+
         //esconde teclado depois de pesquisar
         esconderTeclado();
 
@@ -243,6 +280,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     //metodo para mover a camera
     private void moveCamera(LatLng latLng, float zoom , String title) {
         Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
+
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado();
+
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         //adicionar marker de uma pesquisa
@@ -256,8 +297,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
 
         }
 
-        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
-        esconderTeclado();
     }
 
 
@@ -343,8 +382,71 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback {
     }
 
     private void esconderTeclado(){
-        this.getView().clearFocus();
-        getActivity().getWindow().setSoftInputMode(
+        Log.d("teclado","esconder teclado ");
+
+        this.getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+
+    /* ------------------------------------------
+        Google places API autocomplete sugestions
+        -----------------------------------------*/
+     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
+            esconderTeclado();
+
+            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            //precisamos do objeto da localizacao
+                    PendingResult< PlaceBuffer> placeResult = GeoDataApi.getPlaceById(mGoogleApiClient,placeId);
+
+                    placeResult.setResultCallback(placeDetailCallback);
+
+        }
+    };
+
+    // traz a informação sobre o sitio pesquisado
+     private ResultCallback<PlaceBuffer> placeDetailCallback = new ResultCallback<PlaceBuffer>() {
+         @Override
+         public void onResult(@NonNull PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+                Log.d(TAG, " place query did not complete " + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            //traz o sitio , so é executado se for uma pesquisa valida
+            final Place place = places.get(0);
+
+            try{
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                mPlace.setAddress(place.getAddress().toString());
+                mPlace.setAttributions(place.getAttributions().toString());
+                mPlace.setId(place.getId().toString());
+                mPlace.setLatLng(place.getLatLng());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                mPlace.setRating(place.getRating());
+                mPlace.setWebsite(place.getWebsiteUri());
+
+                Log.d(TAG, " place : " + mPlace.toString());
+
+            }catch(NullPointerException e)
+            {
+                Log.e(TAG,"error : " + e.getMessage());
+            }
+            //mover a camera
+             moveCamera(new LatLng(place.getViewport().getCenter().latitude,
+                     place.getViewport().getCenter().longitude), DEFAULT_ZOOM , mPlace.getName());
+
+             places.release();
+         }
+     };
 }

@@ -37,6 +37,7 @@ public class FragmentInfoDoEspaco extends Fragment {
                 imagem.setImageResource(nBundle.getInt("imagemLocal"));
             }
 
+
         // Inflate the layout for this fragment
         return view;
     }

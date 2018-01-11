@@ -108,6 +108,8 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
             fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
             fragmentoTransaction.commit();
+
+
         }
         else if (id == R.id.fragmentMaisVisitados) {
         //    fragment = new FragmentMaisVisitados();
@@ -141,6 +143,13 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(String title) {
 // NOTE:  Code to replace the toolbar title based current visible fragment
         getSupportActionBar().setTitle(title);
+    }
+
+    public void setInfoEspacoFragment(){
+        FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
+        FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
+        fragmentoTransaction.commit();
     }
 
 }
