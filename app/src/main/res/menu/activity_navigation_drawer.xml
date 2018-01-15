@@ -22,7 +22,7 @@
     <item android:title="Opçoes">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/fragmentMinhaConta"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Minha Conta" />
             <item

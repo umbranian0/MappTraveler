@@ -2,6 +2,7 @@ package com.example.vasil.mapptraveler;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -71,6 +72,11 @@ public class FragmentoPontosAVisitar extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     public interface OnFragmentInteractionListener {

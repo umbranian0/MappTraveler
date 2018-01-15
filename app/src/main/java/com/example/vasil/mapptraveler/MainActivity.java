@@ -127,6 +127,17 @@ public class MainActivity extends AppCompatActivity
             fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
             fragmentoTransaction.commit();
         }
+
+        else if (id == R.id.fragmentMinhaConta) {
+            //    fragment = new FragmentMap();
+            setTitle(" Minha conta ");
+            FragmentMinhaConta fragmento = new FragmentMinhaConta();
+            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment minha conta");
+            fragmentoTransaction.commit();
+        }
+
+
         // Cidigo de Mudança de Fragmento
         /*if(fragment != null){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -145,11 +156,5 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(title);
     }
 
-    public void setInfoEspacoFragment(){
-        FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
-        FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
-        fragmentoTransaction.commit();
-    }
 
 }
