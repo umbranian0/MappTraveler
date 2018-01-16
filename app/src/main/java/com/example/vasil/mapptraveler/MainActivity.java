@@ -8,8 +8,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
 
@@ -120,13 +129,61 @@ public class MainActivity extends AppCompatActivity
             fragmentoTransaction.commit();
         }
         else if (id == R.id.fragmentMap) {
-        //    fragment = new FragmentMap();
-            setTitle(" MAPA ");
-            FragmentMap fragmento = new FragmentMap();
-            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
-            fragmentoTransaction.commit();
+
+            //primeiro precisamos de um responseListener
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+
+                        JSONArray jsonResponse = new JSONArray(response);
+                        Log.d("JSON RESP", jsonResponse.toString());
+
+                        //bundle total
+                        Bundle bundleTot = new Bundle();
+
+                       for(int i = 0; i < jsonResponse.length();i++){
+                           JSONObject resposta = (JSONObject)jsonResponse.get(i);
+                           String nome = resposta.getString("nome");
+                           String lng= resposta.getString("lng");
+                           String lat= resposta.getString("lat");
+
+
+                           Bundle bundle = new Bundle();
+                           bundle.putString("nomeLoc", nome );
+                           bundle.putString("nomeLoc", lng );
+                           bundle.putString("nomeLoc", lat );
+
+                           bundleTot.putBundle("b"+i , bundle);
+
+                        }
+
+
+                            //criação da transação do fragmento
+                            //    fragment = new FragmentMap();
+                            setTitle(" MAPA ");
+                            FragmentMap fragmento = new FragmentMap();
+                            //envia o bundle com os diversos obj
+                            fragmento.setArguments(bundleTot);
+
+                            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
+                            fragmentoTransaction.commit();
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            };
+
+            //     //criamos um request de login
+            LocationRequest locationRequest = new LocationRequest( responseListener );
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(locationRequest);
         }
+
 
         else if (id == R.id.fragmentMinhaConta) {
             //    fragment = new FragmentMap();

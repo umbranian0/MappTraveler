@@ -110,6 +110,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         btnPlacePicker = (ImageView)view.findViewById(R.id.placePicker);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
 
+        //receber o bundle
+        //este bundle é quem contem todas as localizacoes
+        Bundle bundle = getArguments();
+
+        for(int i = 0 ; i < bundle.size() ; i++){
+            Bundle aux = bundle.getBundle("b"+i);
+        }
+
         return view;
 
     }
@@ -303,7 +311,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             getLocationPermission();
         }
 
-
     }
 
 
@@ -483,4 +490,9 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
              places.release();
          }
      };
+
+     //--------------------------------------------------------
+    //Setting locations from the server
+
+
 }
