@@ -1,6 +1,7 @@
 package com.example.vasil.mapptraveler;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +21,7 @@ public class FragmentoPontosAVisitar extends Fragment {
     ViewGroup v;
     ListView lista;
     Toolbar t;
+
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
     int[] imagens = {R.drawable.castelo,
             R.drawable.palacio,
@@ -48,25 +50,10 @@ public class FragmentoPontosAVisitar extends Fragment {
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                Bundle b1 = new Bundle();
-                b1.putString("nomelocal",nomesLocais[i]);
-                b1.putInt("imagensLocal",imagens[i]);
-
-                if(v!=null){
-                    v.removeAllViews();
-                }
-
-                FragmentInfoDoEspaco fragmento = new FragmentInfoDoEspaco();
-                //envio o argumento com o fragmento
-                fragmento.setArguments(b1);
-
-                FragmentTransaction fragmentoTransaction = getChildFragmentManager().beginTransaction();
-
-                fragmentoTransaction.replace(R.id.frame,fragmento,"fragment info do espaco a visitar");
-                fragmentoTransaction.addToBackStack(null);
-                fragmentoTransaction.commit();
-                getActivity().finish();
+                Intent nIntent = new Intent(getActivity(), InfoDoEspaco.class);
+                nIntent.putExtra("nomeLocal", nomesLocais[i]);
+                nIntent.putExtra("imagemLocal", imagens[i]);
+                startActivity(nIntent);
             }
         });
 
