@@ -68,12 +68,15 @@ public class LoginActivity extends AppCompatActivity  {
                             if(success){
                                 //trazemos o que o JSON file responde
                                 String name = jsonResponse.getString("name");
-
+                                String localizacoesVisitadas = jsonResponse.getString("locais_visitados");
+                                String localizajoes_A_Visitar = jsonResponse.getString("locais_a_visitar");
                                 //criacao do intent
                                 Intent loginIntent = new Intent(LoginActivity.this ,MainActivity.class);
                                 //passamos parametross que queremos
                                 loginIntent.putExtra("name",name);
                                 loginIntent.putExtra("username",username);
+                                loginIntent.putExtra("locais_visitados",localizacoesVisitadas);
+                                loginIntent.putExtra("locais_a_visitar",localizajoes_A_Visitar);
                                 //começamos o intent
                                 startActivity(loginIntent);
                             }

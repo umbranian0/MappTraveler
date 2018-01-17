@@ -1,5 +1,6 @@
 package com.example.vasil.mapptraveler;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,19 +33,35 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView.OnNavigationItemSelectedListener {
 
+            //bundle estatico que partilha informação sobre a conta logada
+        public static Bundle dadosConta = new Bundle();
+
+        //atributos
+        TextView mName;
+        TextView mUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* //teste
+        //teste
         //vamos buscar os dados da outra atividade para esta
+
         Intent intent = getIntent();
         String nome = intent.getStringExtra("name");
         String username = intent.getStringExtra("username");
-        String message = nome + "bem vondo ao MAPP TRAVELER";
-*/
+        String localizacoesVisitadas = intent.getStringExtra("locais_visitados");
+        String localizacoes_A_Visitar = intent.getStringExtra("locais_a_visitar");
+
+
+        dadosConta.putString("name",nome);
+        dadosConta.putString("username",username);
+        dadosConta.putString("locais_visitados",localizacoesVisitadas);
+        dadosConta.putString("locais_a_visitar",localizacoes_A_Visitar);
+
+       // String message = nome + "bem vondo ao MAPP TRAVELER";
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -54,9 +72,14 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         //acesso ao menu de navehação
+        ////Connect the views of navigation bar
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mName   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.textNome);
+        mUsername   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.txtUsername);
 
+        mName.setText(nome);
+        mUsername.setText(username);
 
         //NOTE:  Checks first item in the navigation drawer initially
         navigationView.setCheckedItem(R.id.fragmentPontosAVisitar);
@@ -163,8 +186,9 @@ public class MainActivity extends AppCompatActivity
                             //    fragment = new FragmentMap();
                             setTitle(" MAPA ");
                             FragmentMap fragmento = new FragmentMap();
-                            //envia o bundle com os diversos obj
-                            fragmento.setArguments(bundleTot);
+
+                                    //envia o bundle com os diversos obj
+                                    fragmento.setArguments(bundleTot);
 
                             FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
                             fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
@@ -189,6 +213,7 @@ public class MainActivity extends AppCompatActivity
             //    fragment = new FragmentMap();
             setTitle(" Minha conta ");
             FragmentMinhaConta fragmento = new FragmentMinhaConta();
+            fragmento.setArguments(dadosConta);
             FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
             fragmentoTransaction.replace(R.id.frame,fragmento,"fragment minha conta");
             fragmentoTransaction.commit();
