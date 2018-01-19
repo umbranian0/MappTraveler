@@ -59,7 +59,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".InfoDoEspaco"></activity>
+        <activity android:name=".InfoDoEspaco" />
+        <activity android:name=".InfoEspacoHorario"></activity>
     </application>
 
 </manifest>

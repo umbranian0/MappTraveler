@@ -26,6 +26,9 @@ public class FragmentoPontosAVisitar extends Fragment {
     int[] imagens = {R.drawable.castelo,
             R.drawable.palacio,
             R.drawable.igreja};
+    int[] horarios = {R.drawable.h1,
+            R.drawable.h2,
+            R.drawable.h3};
 
     public FragmentoPontosAVisitar() {
         // Required empty public constructor
@@ -53,6 +56,7 @@ public class FragmentoPontosAVisitar extends Fragment {
                 Intent nIntent = new Intent(getActivity(), InfoDoEspaco.class);
                 nIntent.putExtra("nomeLocal", nomesLocais[i]);
                 nIntent.putExtra("imagemLocal", imagens[i]);
+                nIntent.putExtra("horarioLocal", horarios[i]);
                 startActivity(nIntent);
             }
         });
