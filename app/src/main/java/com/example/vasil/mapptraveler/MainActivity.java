@@ -219,13 +219,12 @@ public class MainActivity extends AppCompatActivity
             fragmentoTransaction.commit();
         }
 
+        else if(id == R.id.logOut){
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
-        // Cidigo de Mudança de Fragmento
-        /*if(fragment != null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.frame, fragment);
-            ft.commit();
-        }*/
         //NOTE:  Closing the drawer after selecting
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
