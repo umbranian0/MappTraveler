@@ -3,6 +3,7 @@ package com.example.vasil.mapptraveler;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -20,8 +21,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -53,6 +54,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -93,11 +95,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Boolean mLocationPermissionGranted = false;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
+    private Marker mMarker;
     //widgets
 
     private RadioGroup tipoMapa;
     private ImageView imgLoc ;
     private ImageView btnPlacePicker;
+    private ImageView btnInfo;
     private AutoCompleteTextView mSearchText;
 
 
@@ -118,7 +122,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         mSearchText = (AutoCompleteTextView) view.findViewById(R.id.inputSearch);
         btnPlacePicker = (ImageView)view.findViewById(R.id.placePicker);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
-
+        btnInfo = (ImageView)view.findViewById(R.id.imgInfo);
 
         //pede as localizacoes que tem de adicionar do servidor
         requestLocationsServer();
@@ -177,7 +181,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         imgLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"clicou no icon de sua localizacao");
+                Log.d(TAG,"clickou no icon de sua localizacao");
                 getDeviceLocation();
             }
         });
@@ -199,9 +203,32 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
                 }
             }
         });
+        //botao para informação detalhada do espaco
+        btnInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "on click btnInfo");
+
+                try {
+
+                     if(mMarker.isInfoWindowShown()){
+                         //se ja houver uma janela
+                        mMarker.hideInfoWindow();
+                     }else{
+                         //display window
+                         Log.d(TAG, " displaying window");
+                         mMarker.showInfoWindow();
+                     }
+
+                }//caso de erro
+                catch (NullPointerException e){
+                    Log.e(TAG, "on click null pointer " + e.getMessage());
+                }
+            }
+        });
 
         //esconde teclado depois de pesquisar
-        esconderTeclado();
+        esconderTeclado(getContext());
 
     }
 
@@ -293,7 +320,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onMapReady(GoogleMap map) {
-        Toast.makeText(FragmentMap.this.getActivity(), "MAPA", Toast.LENGTH_SHORT).show();
+        Toast.makeText(FragmentMap.this.getActivity(), "A iniciar", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Map is Ready");
         nMap = map;
 
@@ -324,30 +351,58 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     //metodo para mover a camera
     private void moveCamera(LatLng latLng, float zoom , String title) {
         Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
-        nMap.clear();
-
-        //informaçao detalhada dos sitios
-        nMap.setInfoWindowAdapter(new CustomWindowAdapter(this.getContext()));
-
-        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
-        esconderTeclado();
 
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        //adicionar marker de uma pesquisa
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title(title);
-
+        nMap.clear();
         //So cria marcador se for outra localização sem ser a minha
         if(!title.equals("Minha Localizacao")){
+            //adicionar marker de uma pesquisa
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title(title);
             nMap.addMarker(options);
-
         }
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado(getContext());
 
     }
 
+    //metodo para mover a camera
+    private void moveCamera(LatLng latLng, float zoom , PlaceInfo placeInfo) {
+        Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
 
+        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        nMap.clear();
+        //informaçao detalhada dos sitios
+        nMap.setInfoWindowAdapter(new CustomWindowAdapter(this.getContext()));
+
+        if(placeInfo != null){
+            try{
+                String snippet = "Address: " + placeInfo.getAddress() + "\n" +
+                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
+                        "Website: " + placeInfo.getWebsite() + "\n" +
+                        "Price Rating: " + placeInfo.getRating() + "\n";
+
+                MarkerOptions options = new MarkerOptions()
+                        .position(latLng)
+                        .title(placeInfo.getName())
+                        .snippet(snippet);
+                mMarker = nMap.addMarker(options);
+
+            }catch (NullPointerException e){
+                Log.e(TAG, "moveCamera: NullPointerException: " + e.getMessage() );
+            }
+        }else{
+            nMap.addMarker(new MarkerOptions().position(latLng));
+        }
+
+
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado(getContext());
+
+    }
     //funçao para mudar o tipo de mapa
     public void changeMapType(View v) {
 
@@ -429,11 +484,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-    private void esconderTeclado(){
+    private void esconderTeclado(Context ctx){
         Log.d("teclado","esconder teclado ");
 
-        this.getActivity().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        InputMethodManager inputManager = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View v = ((Activity) ctx).getCurrentFocus();
+        if (v == null)
+            return;
+
+        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     @Override
@@ -448,7 +510,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
      private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
-            esconderTeclado();
+            esconderTeclado(getContext());
 
             final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
             final String placeId = item.getPlaceId();
@@ -492,7 +554,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             }
             //mover a camera
              moveCamera(new LatLng(place.getViewport().getCenter().latitude,
-                     place.getViewport().getCenter().longitude), DEFAULT_ZOOM , mPlace.getName());
+                     place.getViewport().getCenter().longitude), DEFAULT_ZOOM , mPlace);
 
              places.release();
          }
@@ -507,21 +569,19 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             //esta e a resposta
             //teremos entao que converter a resposta em object JSON
             public void onResponse(String response) {
-                JSONArray array = null;
                 try {
                     Log.i("resposta localizacoes",response);
 
-                    JSONObject json = new JSONObject((response));
-                    array = json.getJSONArray("nome");
+                    JSONArray json = new JSONArray((response));
 
-                    for(int i = 0 ; i < array.length(); i++){
-                        JSONObject objeto = (JSONObject) array.get(i);
+                    for(int i = 0 ; i < json.length(); i++){
+                        JSONObject objeto = (JSONObject) json.get(i);
 
                         String nome = objeto.getString("nome");
                         double latitude = objeto.getDouble("lat");
                         double longitude = objeto.getDouble("lng");
 
-                        drawCircle(new LatLng(latitude,longitude));
+                        drawCircle(new LatLng(latitude,longitude),nome);
                         Log.i("drawCircle", "drawed circle "+i);
                     }
                       //  Log.i("RequestServer"," recebeste os dados");
@@ -542,7 +602,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
     //--------------------------------------------------------
     //fazer circulos das localizacoes que temos na BDD
-    private void drawCircle(LatLng point){
+    private void drawCircle(LatLng point, String nome){
         Log.i("drawingCircle", "Desenhar ciruclos");
         // Instantiating CircleOptions to draw a circle around the marker
         CircleOptions circleOptions = new CircleOptions();
@@ -567,7 +627,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
 
         //adicionar marker
         MarkerOptions mark = new MarkerOptions()
-                .position(point);
+                .position(point)
+                .title(nome);
 
         nMap.addMarker(mark);
     }

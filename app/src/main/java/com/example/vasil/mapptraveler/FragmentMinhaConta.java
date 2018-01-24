@@ -3,7 +3,6 @@ package com.example.vasil.mapptraveler;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,15 +45,10 @@ public class FragmentMinhaConta extends Fragment {
         String bName = bundleRecetor.getString("name");
         String bUser = bundleRecetor.getString("username");
 
-        String bLocVisitados = bundleRecetor.getString("locais_visitados") ;
-        String bLocAVisitar = bundleRecetor.getString("locais_a_visitar");
-
-        Log.d("user", bUser);
-        Log.d("name", bName);
 
         txtNome.setText(bName);
         txtUsername.setText(bUser);
-        txtDescricao.setText(bLocVisitados + bLocAVisitar);
+     //   txtDescricao.setText(bLocVisitados + bLocAVisitar);
 
         // Inflate the layout for this fragment
         return view;
