@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://C:\Users\vasil\AndroidStudioProjects\MappTraveler2\MappTraveler.iml" filepath="C:\Users\vasil\AndroidStudioProjects\MappTraveler2\MappTraveler.iml" />
       <module fileurl="file://$PROJECT_DIR$/MappTraveler2.iml" filepath="$PROJECT_DIR$/MappTraveler2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

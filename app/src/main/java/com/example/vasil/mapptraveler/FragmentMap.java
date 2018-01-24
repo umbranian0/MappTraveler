@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -28,6 +29,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.vasil.mapptraveler.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -46,11 +50,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,16 +119,14 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         btnPlacePicker = (ImageView)view.findViewById(R.id.placePicker);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
 
-        //receber o bundle
-        //este bundle é quem contem todas as localizacoes
-        Bundle bundle = getArguments();
 
-        for(int i = 0 ; i < bundle.size() ; i++){
-            Bundle aux = bundle.getBundle("b"+i);
-        }
-
+        //pede as localizacoes que tem de adicionar do servidor
+        requestLocationsServer();
         return view;
-
+        //receber o bundle
+        //este bundle é quem contem todas as localizacoes predefinidas
+        //  Bundle bundle = getArguments();
+        //  Log.i("Bundle ", bundle.toString());
     }
     //traz o mapa para o fragmento
     @Override
@@ -494,5 +501,74 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
      //--------------------------------------------------------
     //Setting locations from the server
 
+    public void requestLocationsServer(){
 
+        Response.Listener<String> response = new Response.Listener<String>() {
+            //esta e a resposta
+            //teremos entao que converter a resposta em object JSON
+            public void onResponse(String response) {
+                JSONArray array = null;
+                try {
+                    Log.i("resposta localizacoes",response);
+
+                    JSONObject json = new JSONObject((response));
+                    array = json.getJSONArray("nome");
+
+                    for(int i = 0 ; i < array.length(); i++){
+                        JSONObject objeto = (JSONObject) array.get(i);
+
+                        String nome = objeto.getString("nome");
+                        double latitude = objeto.getDouble("lat");
+                        double longitude = objeto.getDouble("lng");
+
+                        drawCircle(new LatLng(latitude,longitude));
+                        Log.i("drawCircle", "drawed circle "+i);
+                    }
+                      //  Log.i("RequestServer"," recebeste os dados");
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        //vai buscar a resposta em JSON
+        LocationRequest request = new LocationRequest( response);
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
+
+    }
+    //--------------------------------------------------------
+    //fazer circulos das localizacoes que temos na BDD
+    private void drawCircle(LatLng point){
+        Log.i("drawingCircle", "Desenhar ciruclos");
+        // Instantiating CircleOptions to draw a circle around the marker
+        CircleOptions circleOptions = new CircleOptions();
+
+        // Specifying the center of the circle
+        circleOptions.center(point);
+
+        // Radius of the circle
+        circleOptions.radius(200);
+
+        // Border color of the circle
+        circleOptions.strokeColor(Color.RED);
+
+        // Fill color of the circle
+        circleOptions.fillColor(0x30ff0000);
+
+        // Border width of the circle
+        circleOptions.strokeWidth(2);
+
+        // Adding the circle to the GoogleMap
+       nMap.addCircle(circleOptions);
+
+        //adicionar marker
+        MarkerOptions mark = new MarkerOptions()
+                .position(point);
+
+        nMap.addMarker(mark);
+    }
 }
