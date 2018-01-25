@@ -5,17 +5,6 @@
     android:background="#fff"
     tools:context="com.example.vasil.mapptraveler.FragmentoPontosAVisitar">
 
-    <TextView
-        android:id="@+id/txtNameEspaco"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="Pontos A Visitar"
-        android:textSize="20sp"
-        android:background="#dde"/>
-
     <ListView
         android:id="@+id/listaFragmentos"
         android:layout_width="match_parent"

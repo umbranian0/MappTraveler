@@ -51,14 +51,9 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         String nome = intent.getStringExtra("name");
         String username = intent.getStringExtra("username");
-        String localizacoesVisitadas = intent.getStringExtra("locais_visitados");
-        String localizacoes_A_Visitar = intent.getStringExtra("locais_a_visitar");
-
 
         dadosConta.putString("name",nome);
         dadosConta.putString("username",username);
-        dadosConta.putString("locais_visitados",localizacoesVisitadas);
-        dadosConta.putString("locais_a_visitar",localizacoes_A_Visitar);
 
        // String message = nome + "bem vondo ao MAPP TRAVELER";
 
@@ -78,13 +73,14 @@ public class MainActivity extends AppCompatActivity
         mName   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.textNome);
         mUsername   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.txtUsername);
 
-        mName.setText(nome);
+        mName.setText("Bem Vindo " + nome);
         mUsername.setText(username);
 
         //NOTE:  Checks first item in the navigation drawer initially
         navigationView.setCheckedItem(R.id.fragmentPontosAVisitar);
 
         //NOTE:  Open fragment1 initially.
+        setTitle("Pontos a Visitar");
         FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
         FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
         fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
@@ -224,12 +220,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-
-    public void onFragmentInteraction(String title) {
-// NOTE:  Code to replace the toolbar title based current visible fragment
-        getSupportActionBar().setTitle(title);
     }
 
 

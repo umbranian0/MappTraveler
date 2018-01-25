@@ -3,6 +3,7 @@ package com.example.vasil.mapptraveler;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,13 +43,21 @@ public class FragmentMinhaConta extends Fragment {
         btnAlterarPassword = (Button)view.findViewById(R.id.btnAlterarPassword);
 
         Bundle bundleRecetor = getArguments();
-        String bName = bundleRecetor.getString("name");
         String bUser = bundleRecetor.getString("username");
+        String bName = bundleRecetor.getString("name");
 
 
-      //  txtNome.setText(bName);
-     //   txtUsername.setText(bUser);
-     //   txtDescricao.setText(bLocVisitados + bLocAVisitar);
+        try {
+        txtNome.setText(bName);
+         }catch(NullPointerException e){
+            Log.d("Erro nome", "erro" + e.getMessage());
+        }
+        try {
+            txtUsername.setText(bUser);
+        }catch(NullPointerException e){
+            Log.d("Erro user", "erro" + e.getMessage());
+        }
+        //   txtDescricao.setText(bLocVisitados + bLocAVisitar);
 
         // Inflate the layout for this fragment
         return view;

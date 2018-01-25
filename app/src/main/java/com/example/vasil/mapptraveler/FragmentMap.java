@@ -125,7 +125,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         btnInfo = (ImageView)view.findViewById(R.id.imgInfo);
 
         //pede as localizacoes que tem de adicionar do servidor
-        requestLocationsServer();
+       // requestLocationsServer();
         return view;
         //receber o bundle
         //este bundle é quem contem todas as localizacoes predefinidas
@@ -289,6 +289,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
                         if (task.isSuccessful()) {
                             Log.d(TAG, "found location");
                             Location currentLocation = (Location) task.getResult();
+
                             //mover a camera para este resultado
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM,
                                     "Minha Localizacao");
@@ -353,6 +354,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
 
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        //pedir localizacao dos espacos a visitar
+        requestLocationsServer();
 
         nMap.clear();
         //So cria marcador se for outra localização sem ser a minha
@@ -373,7 +376,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
 
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-
+        requestLocationsServer();
         nMap.clear();
         //informaçao detalhada dos sitios
         nMap.setInfoWindowAdapter(new CustomWindowAdapter(this.getContext()));
