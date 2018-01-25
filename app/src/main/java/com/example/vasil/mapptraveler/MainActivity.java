@@ -1,5 +1,6 @@
 package com.example.vasil.mapptraveler;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -8,8 +9,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
 
@@ -22,19 +33,35 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView.OnNavigationItemSelectedListener {
 
+            //bundle estatico que partilha informação sobre a conta logada
+        public static Bundle dadosConta = new Bundle();
+
+        //atributos
+        TextView mName;
+        TextView mUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* //teste
+        //teste
         //vamos buscar os dados da outra atividade para esta
+
         Intent intent = getIntent();
         String nome = intent.getStringExtra("name");
         String username = intent.getStringExtra("username");
-        String message = nome + "bem vondo ao MAPP TRAVELER";
-*/
+        String localizacoesVisitadas = intent.getStringExtra("locais_visitados");
+        String localizacoes_A_Visitar = intent.getStringExtra("locais_a_visitar");
+
+
+        dadosConta.putString("name",nome);
+        dadosConta.putString("username",username);
+        dadosConta.putString("locais_visitados",localizacoesVisitadas);
+        dadosConta.putString("locais_a_visitar",localizacoes_A_Visitar);
+
+       // String message = nome + "bem vondo ao MAPP TRAVELER";
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,9 +72,14 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         //acesso ao menu de navehação
+        ////Connect the views of navigation bar
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mName   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.textNome);
+        mUsername   = (TextView)navigationView.getHeaderView(0).findViewById(R.id.txtUsername);
 
+        mName.setText(nome);
+        mUsername.setText(username);
 
         //NOTE:  Checks first item in the navigation drawer initially
         navigationView.setCheckedItem(R.id.fragmentPontosAVisitar);
@@ -83,11 +115,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -120,19 +147,79 @@ public class MainActivity extends AppCompatActivity
             fragmentoTransaction.commit();
         }
         else if (id == R.id.fragmentMap) {
-        //    fragment = new FragmentMap();
-            setTitle(" MAPA ");
-            FragmentMap fragmento = new FragmentMap();
+
+            //primeiro precisamos de um responseListener
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+
+                        JSONArray jsonResponse = new JSONArray(response);
+                        Log.d("JSON RESP", jsonResponse.toString());
+
+                        //bundle total
+                        Bundle bundleTot = new Bundle();
+
+                       for(int i = 0; i < jsonResponse.length();i++){
+                           JSONObject resposta = (JSONObject)jsonResponse.get(i);
+                           String nome = resposta.getString("nome");
+                           String lng= resposta.getString("lng");
+                           String lat= resposta.getString("lat");
+
+
+                           Bundle bundle = new Bundle();
+                           bundle.putString("nomeLoc", nome );
+                           bundle.putString("nomeLoc", lng );
+                           bundle.putString("nomeLoc", lat );
+
+                           bundleTot.putBundle("b"+i , bundle);
+
+                        }
+
+
+                            //criação da transação do fragmento
+                            //    fragment = new FragmentMap();
+                            setTitle(" MAPA ");
+                            FragmentMap fragmento = new FragmentMap();
+
+                                    //envia o bundle com os diversos obj
+                                    fragmento.setArguments(bundleTot);
+
+                            FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
+                            fragmentoTransaction.commit();
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            };
+
+            //     //criamos um request de login
+            LocationRequest locationRequest = new LocationRequest( responseListener );
+            RequestQueue queue = Volley.newRequestQueue(this);
+            queue.add(locationRequest);
+        }
+
+
+        else if (id == R.id.fragmentMinhaConta) {
+            //    fragment = new FragmentMap();
+            setTitle(" Minha conta ");
+            FragmentMinhaConta fragmento = new FragmentMinhaConta();
+            fragmento.setArguments(dadosConta);
             FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment Map");
+            fragmentoTransaction.replace(R.id.frame,fragmento,"fragment minha conta");
             fragmentoTransaction.commit();
         }
-        // Cidigo de Mudança de Fragmento
-        /*if(fragment != null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.frame, fragment);
-            ft.commit();
-        }*/
+
+        else if(id == R.id.logOut){
+            Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         //NOTE:  Closing the drawer after selecting
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -145,11 +232,5 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(title);
     }
 
-    public void setInfoEspacoFragment(){
-        FragmentoPontosAVisitar fragmento = new FragmentoPontosAVisitar();
-        FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
-        fragmentoTransaction.commit();
-    }
 
 }

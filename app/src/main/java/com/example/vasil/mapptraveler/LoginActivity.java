@@ -68,12 +68,13 @@ public class LoginActivity extends AppCompatActivity  {
                             if(success){
                                 //trazemos o que o JSON file responde
                                 String name = jsonResponse.getString("name");
-
+                                //String user = jsonResponse.getString("username");
                                 //criacao do intent
                                 Intent loginIntent = new Intent(LoginActivity.this ,MainActivity.class);
                                 //passamos parametross que queremos
                                 loginIntent.putExtra("name",name);
                                 loginIntent.putExtra("username",username);
+
                                 //começamos o intent
                                 startActivity(loginIntent);
                             }

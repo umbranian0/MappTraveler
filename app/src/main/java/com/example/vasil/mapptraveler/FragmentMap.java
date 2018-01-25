@@ -3,7 +3,10 @@ package com.example.vasil.mapptraveler;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,8 +21,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -27,8 +30,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.vasil.mapptraveler.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -43,16 +51,23 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
 import static com.google.android.gms.location.places.Places.GeoDataApi;
 
 
@@ -63,12 +78,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     //api key da google
     private GoogleMap nMap;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static String TAG = "MapFragment";
-    private static String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int PLACE_PICKER_REQUEST = 1;
+
+    private static final String TAG = "MapFragment";
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     //2 coordenadas random do mundo
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40,-168),new LatLng(71,136));
+    private static final float DEFAULT_ZOOM = 15f;
+
     //atrubutos
     //atributos do googleapi
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -76,11 +95,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Boolean mLocationPermissionGranted = false;
     private PlaceAutocompleteAdapter mPlaceAutocompleteAdapter;
     private PlaceInfo mPlace;
+    private Marker mMarker;
     //widgets
-    private static final float DEFAULT_ZOOM = 15f;
+
     private RadioGroup tipoMapa;
     private ImageView imgLoc ;
     private ImageView btnPlacePicker;
+    private ImageView btnInfo;
     private AutoCompleteTextView mSearchText;
 
 
@@ -101,9 +122,15 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         mSearchText = (AutoCompleteTextView) view.findViewById(R.id.inputSearch);
         btnPlacePicker = (ImageView)view.findViewById(R.id.placePicker);
         imgLoc = (ImageView)view.findViewById(R.id.imgLoc);
+        btnInfo = (ImageView)view.findViewById(R.id.imgInfo);
 
+        //pede as localizacoes que tem de adicionar do servidor
+        requestLocationsServer();
         return view;
-
+        //receber o bundle
+        //este bundle é quem contem todas as localizacoes predefinidas
+        //  Bundle bundle = getArguments();
+        //  Log.i("Bundle ", bundle.toString());
     }
     //traz o mapa para o fragmento
     @Override
@@ -154,7 +181,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         imgLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"clicou no icon de sua localizacao");
+                Log.d(TAG,"clickou no icon de sua localizacao");
                 getDeviceLocation();
             }
         });
@@ -163,16 +190,61 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         btnPlacePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int PLACE_PICKER_REQUEST = 1;
+
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
+                try {
+                    startActivityForResult(builder.build(getActivity()),PLACE_PICKER_REQUEST);
 
+                } catch (GooglePlayServicesRepairableException e) {
+                    Log.e(TAG," onClick btnPlacepicker"+e.getMessage());
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    Log.e(TAG," onClick btnPlacepicker, not available"+e.getMessage());
+                }
+            }
+        });
+        //botao para informação detalhada do espaco
+        btnInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "on click btnInfo");
+
+                try {
+
+                     if(mMarker.isInfoWindowShown()){
+                         //se ja houver uma janela
+                        mMarker.hideInfoWindow();
+                     }else{
+                         //display window
+                         Log.d(TAG, " displaying window");
+                         mMarker.showInfoWindow();
+                     }
+
+                }//caso de erro
+                catch (NullPointerException e){
+                    Log.e(TAG, "on click null pointer " + e.getMessage());
+                }
             }
         });
 
         //esconde teclado depois de pesquisar
-        esconderTeclado();
+        esconderTeclado(getContext());
 
+    }
+
+    //result for place picker btn
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                //Place é o objeto que vamos buscar
+                Place place = PlacePicker.getPlace(this.getContext(), data);
+
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient,place.getId());
+
+                placeResult.setResultCallback(placeDetailCallback);
+
+            }
+        }
     }
 //para pesquisar
     private void geoLocate() {
@@ -248,7 +320,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onMapReady(GoogleMap map) {
-        Toast.makeText(FragmentMap.this.getActivity(), "MAPA", Toast.LENGTH_SHORT).show();
+        Toast.makeText(FragmentMap.this.getActivity(), "A iniciar", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Map is Ready");
         nMap = map;
 
@@ -273,7 +345,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             getLocationPermission();
         }
 
-
     }
 
 
@@ -281,25 +352,57 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
     private void moveCamera(LatLng latLng, float zoom , String title) {
         Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
 
-        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
-        esconderTeclado();
-
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
-        //adicionar marker de uma pesquisa
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title(title);
-
+        nMap.clear();
         //So cria marcador se for outra localização sem ser a minha
         if(!title.equals("Minha Localizacao")){
+            //adicionar marker de uma pesquisa
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .title(title);
             nMap.addMarker(options);
-
         }
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado(getContext());
 
     }
 
+    //metodo para mover a camera
+    private void moveCamera(LatLng latLng, float zoom , PlaceInfo placeInfo) {
+        Log.d(TAG, "moving the camera to : lat " + latLng.latitude + " | long : " + latLng.longitude);
 
+        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+
+        nMap.clear();
+        //informaçao detalhada dos sitios
+        nMap.setInfoWindowAdapter(new CustomWindowAdapter(this.getContext()));
+
+        if(placeInfo != null){
+            try{
+                String snippet = "Address: " + placeInfo.getAddress() + "\n" +
+                        "Phone Number: " + placeInfo.getPhoneNumber() + "\n" +
+                        "Website: " + placeInfo.getWebsite() + "\n" +
+                        "Price Rating: " + placeInfo.getRating() + "\n";
+
+                MarkerOptions options = new MarkerOptions()
+                        .position(latLng)
+                        .title(placeInfo.getName())
+                        .snippet(snippet);
+                mMarker = nMap.addMarker(options);
+
+            }catch (NullPointerException e){
+                Log.e(TAG, "moveCamera: NullPointerException: " + e.getMessage() );
+            }
+        }else{
+            nMap.addMarker(new MarkerOptions().position(latLng));
+        }
+
+
+        //vai esconder a caixa de dialogo sempre que fizer uma pesquisa
+        esconderTeclado(getContext());
+
+    }
     //funçao para mudar o tipo de mapa
     public void changeMapType(View v) {
 
@@ -381,11 +484,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-    private void esconderTeclado(){
+    private void esconderTeclado(Context ctx){
         Log.d("teclado","esconder teclado ");
 
-        this.getActivity().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        InputMethodManager inputManager = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View v = ((Activity) ctx).getCurrentFocus();
+        if (v == null)
+            return;
+
+        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     @Override
@@ -400,7 +510,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
      private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
-            esconderTeclado();
+            esconderTeclado(getContext());
 
             final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
             final String placeId = item.getPlaceId();
@@ -444,9 +554,82 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             }
             //mover a camera
              moveCamera(new LatLng(place.getViewport().getCenter().latitude,
-                     place.getViewport().getCenter().longitude), DEFAULT_ZOOM , mPlace.getName());
+                     place.getViewport().getCenter().longitude), DEFAULT_ZOOM , mPlace);
 
              places.release();
          }
      };
+
+     //--------------------------------------------------------
+    //Setting locations from the server
+
+    public void requestLocationsServer(){
+
+        Response.Listener<String> response = new Response.Listener<String>() {
+            //esta e a resposta
+            //teremos entao que converter a resposta em object JSON
+            public void onResponse(String response) {
+                try {
+                    Log.i("resposta localizacoes",response);
+
+                    JSONArray json = new JSONArray((response));
+
+                    for(int i = 0 ; i < json.length(); i++){
+                        JSONObject objeto = (JSONObject) json.get(i);
+
+                        String nome = objeto.getString("nome");
+                        double latitude = objeto.getDouble("lat");
+                        double longitude = objeto.getDouble("lng");
+
+                        drawCircle(new LatLng(latitude,longitude),nome);
+                        Log.i("drawCircle", "drawed circle "+i);
+                    }
+                      //  Log.i("RequestServer"," recebeste os dados");
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+                }
+
+            }
+        };
+
+        //vai buscar a resposta em JSON
+        LocationRequest request = new LocationRequest( response);
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(request);
+
+    }
+    //--------------------------------------------------------
+    //fazer circulos das localizacoes que temos na BDD
+    private void drawCircle(LatLng point, String nome){
+        Log.i("drawingCircle", "Desenhar ciruclos");
+        // Instantiating CircleOptions to draw a circle around the marker
+        CircleOptions circleOptions = new CircleOptions();
+
+        // Specifying the center of the circle
+        circleOptions.center(point);
+
+        // Radius of the circle
+        circleOptions.radius(200);
+
+        // Border color of the circle
+        circleOptions.strokeColor(Color.RED);
+
+        // Fill color of the circle
+        circleOptions.fillColor(0x30ff0000);
+
+        // Border width of the circle
+        circleOptions.strokeWidth(2);
+
+        // Adding the circle to the GoogleMap
+       nMap.addCircle(circleOptions);
+
+        //adicionar marker
+        MarkerOptions mark = new MarkerOptions()
+                .position(point)
+                .title(nome);
+
+        nMap.addMarker(mark);
+    }
 }
