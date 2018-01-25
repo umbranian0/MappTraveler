@@ -46,8 +46,8 @@ public class FragmentMinhaConta extends Fragment {
         String bUser = bundleRecetor.getString("username");
 
 
-        txtNome.setText(bName.toString());
-        txtUsername.setText(bUser.toString());
+      //  txtNome.setText(bName);
+     //   txtUsername.setText(bUser);
      //   txtDescricao.setText(bLocVisitados + bLocAVisitar);
 
         // Inflate the layout for this fragment

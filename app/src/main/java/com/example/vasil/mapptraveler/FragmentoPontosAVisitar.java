@@ -30,6 +30,7 @@ public class FragmentoPontosAVisitar extends Fragment {
     int[] horarios = {R.drawable.h1,
             R.drawable.h2,
             R.drawable.h3};
+    int[] visita = {1, 0, 1};
 
     public FragmentoPontosAVisitar() {
         // Required empty public constructor
@@ -45,7 +46,7 @@ public class FragmentoPontosAVisitar extends Fragment {
 
         t = (Toolbar) view.findViewById(R.id.toolbar);
         v = container;
-        MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens);
+        MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens, visita);
 
         lista.setAdapter(myAdapter);
 

@@ -21,7 +21,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/logo"/>
+        android:src="@drawable/logo" />
 
     <ScrollView
         android:id="@+id/login_form"
@@ -86,12 +86,14 @@
                 android:layout_margin="20dp"
                 android:text="Register" />
 
+            <Button
+                android:id="@+id/btnGuest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="guest" />
+
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/btnGuest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="guest" />
 </LinearLayout>
