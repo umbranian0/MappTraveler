@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity
         implements
         /*Why do we need it ?
         Basically, I use to set the toolbar title when i toggle between different fragments.*/
-        FragmentoPontosAVisitar.OnFragmentInteractionListener,
+        //FragmentoPontosAVisitar.OnFragmentInteractionListener,
         FragmentMaisVisitados.OnFragmentInteractionListener,
 
         NavigationView.OnNavigationItemSelectedListener {
@@ -135,8 +135,6 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction fragmentoTransaction = getSupportFragmentManager().beginTransaction();
             fragmentoTransaction.replace(R.id.frame,fragmento,"fragment a visitar");
             fragmentoTransaction.commit();
-
-
         }
         else if (id == R.id.fragmentMaisVisitados) {
         //    fragment = new FragmentMaisVisitados();
