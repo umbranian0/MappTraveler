@@ -177,7 +177,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
             }
         });
 
-        //para recebentrar n«a loc do utilizador
+        //para recebentrar nvis«a loc do utilizador
         imgLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

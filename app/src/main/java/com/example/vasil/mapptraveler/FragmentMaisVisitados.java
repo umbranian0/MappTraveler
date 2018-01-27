@@ -1,17 +1,16 @@
 package com.example.vasil.mapptraveler;
 
 
-import android.content.res.Resources;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 
 /**
@@ -19,8 +18,22 @@ import java.util.List;
  */
 public class FragmentMaisVisitados extends Fragment {
 
+    ViewGroup v2;
+    ListView lista2;
+    Toolbar t;
 
-    private Spinner spinner;
+    String[] nomesLocais = {"Palacio", "Castelo", "Igreja"};
+    String[] descricao = {"Descrição Palacio","Descrição Castelo",  "Descrição Igreja"};
+    String[] morada = {"Morada Palacio", "Morada Castelo", "Morada Igreja"};
+    int[] imagens = {R.drawable.palacio,
+            R.drawable.castelo,
+            R.drawable.igreja};
+    int[] horarios = {R.drawable.h2,
+            R.drawable.h1,
+            R.drawable.h3};
+    int[] visita = {0, 1, 1};
+    int[] nVisitas = {937, 203, 194};
+
 
     public FragmentMaisVisitados() {
         // Required empty public constructor
@@ -31,23 +44,38 @@ public class FragmentMaisVisitados extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_fragment_mais_visitados, container, false);
+        View view = inflater.inflate(R.layout.fragment_fragment_mais_visitados, container, false);
 
-        spinner = (Spinner)v.findViewById(R.id.spinner);
+        lista2 = (ListView) view.findViewById(R.id.listaFragmentos2);
+        v2 = container;
 
-        //trazemos o array de recursos
-        Resources res = getResources();
-        String[] tipos_de_espacos = res.getStringArray(R.array.tipos_de_espacos);
+        //x = this.getContext();
 
-        //damos set up no spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item,tipos_de_espacos);
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        spinner.setAdapter(adapter);
-        // Inflate the layout for this fragment
-        return v;
+        //requestLocalsServer(); //vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
+
+        PopularAdapter popularAdapter = new PopularAdapter(this.getContext(), nomesLocais,imagens,visita,nVisitas);
+
+        lista2.setAdapter(popularAdapter);
+
+        lista2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent nIntent = new Intent(getActivity(), InfoDoEspaco.class);
+                nIntent.putExtra("nomeLocal", nomesLocais[position]);
+                nIntent.putExtra("descricao", descricao[position]);
+                nIntent.putExtra("morada", morada[position]);
+                nIntent.putExtra("imagemLocal", imagens[position]);
+                nIntent.putExtra("horarioLocal", horarios[position]);
+                startActivity(nIntent);
+            }
+        });
+
+        return view;
 
     }
 
-    public interface OnFragmentInteractionListener {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 }

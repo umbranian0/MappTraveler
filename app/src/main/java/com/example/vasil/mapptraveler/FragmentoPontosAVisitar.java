@@ -72,7 +72,7 @@ public class FragmentoPontosAVisitar extends Fragment {
 
         //x = this.getContext();
 
-        //requestLocalsServer(); vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
+        //requestLocalsServer(); //vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
 
         MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens, visita);
 

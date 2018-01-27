@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
         /*Why do we need it ?
         Basically, I use to set the toolbar title when i toggle between different fragments.*/
         //FragmentoPontosAVisitar.OnFragmentInteractionListener,
-        FragmentMaisVisitados.OnFragmentInteractionListener,
+        //FragmentMaisVisitados.OnFragmentInteractionListener,
 
         NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,14 +51,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent = getIntent();
         String nome = intent.getStringExtra("name");
         String username = intent.getStringExtra("username");
-        String localizacoesVisitadas = intent.getStringExtra("locais_visitados");
-        String localizacoes_A_Visitar = intent.getStringExtra("locais_a_visitar");
 
 
         dadosConta.putString("name",nome);
         dadosConta.putString("username",username);
-        dadosConta.putString("locais_visitados",localizacoesVisitadas);
-        dadosConta.putString("locais_a_visitar",localizacoes_A_Visitar);
 
        // String message = nome + "bem vondo ao MAPP TRAVELER";
 
