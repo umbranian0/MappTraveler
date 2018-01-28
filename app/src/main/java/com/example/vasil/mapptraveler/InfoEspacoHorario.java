@@ -14,6 +14,8 @@ public class InfoEspacoHorario extends AppCompatActivity implements GestureDetec
     Toolbar t;
     ImageView imagem;
     private GestureDetectorCompat detector;
+    String desc;
+    String mora;
     int horario;
     int image;
     String nome;
@@ -30,7 +32,10 @@ public class InfoEspacoHorario extends AppCompatActivity implements GestureDetec
         if(nBundle != null) {
             t.setTitle(nBundle.getString("nomeLocal"));
             imagem.setImageResource(nBundle.getInt("horarioLocal"));
+
             nome = nBundle.getString("nomeLocal");
+            desc = nBundle.getString("descricao");
+            mora = nBundle.getString("morada");
             image = nBundle.getInt("imagemLocal");
             horario = nBundle.getInt("horarioLocal");
         }
@@ -67,6 +72,8 @@ public class InfoEspacoHorario extends AppCompatActivity implements GestureDetec
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         Intent nIntent = new Intent(this, InfoDoEspaco.class);
         nIntent.putExtra("nomeLocal", nome);
+        nIntent.putExtra("descricao", desc);
+        nIntent.putExtra("morada", mora);
         nIntent.putExtra("imagemLocal", image);
         nIntent.putExtra("horarioLocal", horario);
         startActivity(nIntent);

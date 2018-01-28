@@ -9,20 +9,19 @@
 
 
     <ListView
+        android:id="@+id/listaFragmentos2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="103dp" />
+        android:layout_below="@id/popular"
+        android:padding="20dp"  />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/popular"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
-        android:layout_marginTop="68dp"
-        android:entries="@array/tipos_de_espacos" />
-
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:text="Pontos mais Visitados"
+        android:textSize="20sp" />
 </RelativeLayout>

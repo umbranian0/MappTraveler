@@ -23,6 +23,7 @@ public class MyAdapter extends ArrayAdapter<String> {
     int visitado = R.drawable.visitado;
     int porvisitar = R.drawable.porvisitar;
 
+
     public MyAdapter(@NonNull Context context, String[] nomesLocais, int[] imagens, int[] visita) {
         super(context, R.layout.listview_item);
         this.locais = nomesLocais;
@@ -31,7 +32,6 @@ public class MyAdapter extends ArrayAdapter<String> {
         this.visitas = visita;
 
     }
-
     @Override
     public int getCount() {
         return locais.length;
@@ -67,7 +67,7 @@ public class MyAdapter extends ArrayAdapter<String> {
     static class ViewHolder{
         ImageView imagem;
         TextView nomeLocal;
-        public ImageView imagem2;
+        ImageView imagem2;
     }
 
 }
