@@ -1,10 +1,11 @@
-package com.example.vasil.mapptraveler;
+package com.example.vasil.mapptraveler.models;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.vasil.mapptraveler.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 

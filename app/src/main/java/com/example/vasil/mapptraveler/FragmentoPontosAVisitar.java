@@ -1,12 +1,10 @@
 package com.example.vasil.mapptraveler;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +16,9 @@ import android.widget.ListView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.vasil.mapptraveler.ServerRequests.LocaisRequest;
+import com.example.vasil.mapptraveler.models.InfoDoEspaco;
+import com.example.vasil.mapptraveler.models.MyAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,24 +34,33 @@ public class FragmentoPontosAVisitar extends Fragment {
     ListView lista;
     Toolbar t;
 
-
-    /*String[] nomesLocais;
+/*
+    Context x;
+    String[] nomesLocais;
     String[] descricao;
     String[] morada;
-    String[] img;
-    String[] hor;
-    Context x;
     */
+    String[] img = new String[15];
+    String[] hor = new String[15];
+
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
     String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};;
     String[] morada = {"Morada Castelo", "Morada Palacio", "Morada Igreja"};
-    int[] imagens = {R.drawable.castelo,
+
+    int[] imagens = {
+            R.drawable.castelo,
             R.drawable.palacio,
-            R.drawable.igreja};
-    int[] horarios = {R.drawable.h1,
+            R.drawable.igreja
+    };
+    int[] horarios = {
+            R.drawable.h1,
             R.drawable.h2,
             R.drawable.h3};
-    int[] visita = {1, 0, 1};
+
+    int[] visita = {
+            1,
+            0,
+            1};
 
 
 
@@ -64,6 +73,9 @@ public class FragmentoPontosAVisitar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
+
+        //pedir request ao SERVIDOR
+        requestLocalsServer();
 
         lista = (ListView) view.findViewById(R.id.listaFragmentos);
 
@@ -94,7 +106,6 @@ public class FragmentoPontosAVisitar extends Fragment {
         });
 
 
-
         return view;
     }
 
@@ -102,9 +113,12 @@ public class FragmentoPontosAVisitar extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
-}
 
-/*public void requestLocalsServer(){
+    public interface OnFragmentInteractionListener {
+    }
+
+
+public void requestLocalsServer(){
 
         Response.Listener<String> response = new Response.Listener<String>() {
             //esta e a resposta
@@ -121,8 +135,12 @@ public class FragmentoPontosAVisitar extends Fragment {
                         nomesLocais[i] = objeto.getString("nome");
                         descricao[i] = objeto.getString("descricao");
                         morada[i] = objeto.getString("endereco");
-                        img[i] = objeto.getString("imagem");
-                        hor[i] = objeto.getString("horario");
+                       img[i] = objeto.getString("imagem");
+                       hor[i] = objeto.getString("horario");
+
+                       //este log escreve todos os objetos que o JSONarray tem
+                       Log.i("SERVER", json.getString(i));
+                       //agora tens que atribuir os dados que veem do SERVER para o array que tens aqui
                     }
                     Log.i("RequestServer"," recebeste os dados");
 
@@ -141,4 +159,4 @@ public class FragmentoPontosAVisitar extends Fragment {
 
     }
 
-} */
+}

@@ -1,4 +1,4 @@
-package com.example.vasil.mapptraveler;
+package com.example.vasil.mapptraveler.ServerRequests;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -8,17 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by vasil on 16/01/2018.
+ * Created by Kaytsak on 26/01/2018.
  */
 
-public class LocationRequest extends StringRequest {
-
-    private static final String LOCATION_REQUEST_URL = "https://maapptraveler.000webhostapp.com/locationRequest.php";
+public class LocaisRequest extends StringRequest {
+    private static final String LOCAL_REQUEST_URL = "https://maapptraveler.000webhostapp.com/listarLocais.php";
 
     private Map<String , String> params;
 
-    public LocationRequest( Response.Listener<String> listener ) {
-        super(Request.Method.POST, LOCATION_REQUEST_URL, listener, null);
+    public LocaisRequest(Response.Listener<String> listener ) {
+        super(Request.Method.POST, LOCAL_REQUEST_URL, listener, null);
 
         //criar um parametro que contem os dados
         params = new HashMap<>();
@@ -29,4 +28,3 @@ public class LocationRequest extends StringRequest {
         return params;
     }
 }
-

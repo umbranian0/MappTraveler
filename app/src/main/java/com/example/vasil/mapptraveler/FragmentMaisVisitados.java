@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.vasil.mapptraveler.models.InfoDoEspaco;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,12 +27,17 @@ public class FragmentMaisVisitados extends Fragment {
     String[] nomesLocais = {"Palacio", "Castelo", "Igreja"};
     String[] descricao = {"Descrição Palacio","Descrição Castelo",  "Descrição Igreja"};
     String[] morada = {"Morada Palacio", "Morada Castelo", "Morada Igreja"};
-    int[] imagens = {R.drawable.palacio,
+
+    int[] imagens = {
+            R.drawable.palacio,
             R.drawable.castelo,
             R.drawable.igreja};
-    int[] horarios = {R.drawable.h2,
+
+    int[] horarios = {
+            R.drawable.h2,
             R.drawable.h1,
             R.drawable.h3};
+
     int[] visita = {0, 1, 1};
     int[] nVisitas = {937, 203, 194};
 
@@ -77,5 +84,8 @@ public class FragmentMaisVisitados extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public interface OnFragmentInteractionListener {
     }
 }

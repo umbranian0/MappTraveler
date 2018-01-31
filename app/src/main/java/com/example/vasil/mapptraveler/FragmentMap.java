@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.vasil.mapptraveler.ServerRequests.LocationRequest;
+import com.example.vasil.mapptraveler.models.CustomWindowAdapter;
 import com.example.vasil.mapptraveler.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -127,10 +129,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
         //pede as localizacoes que tem de adicionar do servidor
        // requestLocationsServer();
         return view;
-        //receber o bundle
-        //este bundle é quem contem todas as localizacoes predefinidas
-        //  Bundle bundle = getArguments();
-        //  Log.i("Bundle ", bundle.toString());
+
     }
     //traz o mapa para o fragmento
     @Override
@@ -627,6 +626,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleA
 
         // Adding the circle to the GoogleMap
        nMap.addCircle(circleOptions);
+
 
         //adicionar marker
         MarkerOptions mark = new MarkerOptions()

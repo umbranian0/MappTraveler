@@ -58,11 +58,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".InfoDoEspaco"
+            android:name=".models.InfoDoEspaco"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|screenSize"/>
         <activity
-            android:name=".InfoEspacoHorario"
+            android:name=".models.InfoEspacoHorario"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|screenSize"/>
     </application>

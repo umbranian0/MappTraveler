@@ -1,45 +1,39 @@
-package com.example.vasil.mapptraveler;
+package com.example.vasil.mapptraveler.models;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
 
-public class InfoDoEspaco extends AppCompatActivity implements GestureDetector.OnGestureListener {
+import com.example.vasil.mapptraveler.R;
+
+public class InfoEspacoHorario extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
     Toolbar t;
     ImageView imagem;
-    TextView tv1; //morada
-    TextView tv2; //descricao
-
     private GestureDetectorCompat detector;
+    String desc;
+    String mora;
     int horario;
     int image;
     String nome;
-    String desc;
-    String mora;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.infodoespaco);
+        setContentView(R.layout.activity_info_espaco_horario);
 
-        t = (Toolbar) findViewById(R.id.toolbar2);
-        imagem = (ImageView) findViewById(R.id.imageView2);
-        tv1 = (TextView) findViewById(R.id.tvmorada);
-        tv2 = (TextView) findViewById(R.id.tvdescricao);
+        t = (Toolbar) findViewById(R.id.toolbar3);
+        imagem = (ImageView) findViewById(R.id.imageView3);
 
         Bundle nBundle = getIntent().getExtras();
         if(nBundle != null) {
             t.setTitle(nBundle.getString("nomeLocal"));
-            imagem.setImageResource(nBundle.getInt("imagemLocal"));
-            tv1.setText(nBundle.getString("morada"));
-            tv2.setText(nBundle.getString("descricao"));
+            imagem.setImageResource(nBundle.getInt("horarioLocal"));
 
             nome = nBundle.getString("nomeLocal");
             desc = nBundle.getString("descricao");
@@ -49,7 +43,6 @@ public class InfoDoEspaco extends AppCompatActivity implements GestureDetector.O
         }
 
         detector = new GestureDetectorCompat(this,this);
-
     }
 
     @Override
@@ -79,8 +72,7 @@ public class InfoDoEspaco extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-        Intent nIntent = new Intent(this, InfoEspacoHorario.class);
+        Intent nIntent = new Intent(this, InfoDoEspaco.class);
         nIntent.putExtra("nomeLocal", nome);
         nIntent.putExtra("descricao", desc);
         nIntent.putExtra("morada", mora);
@@ -94,6 +86,7 @@ public class InfoDoEspaco extends AppCompatActivity implements GestureDetector.O
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         detector.onTouchEvent(event);
+
         return super.onTouchEvent(event);
     }
 }
