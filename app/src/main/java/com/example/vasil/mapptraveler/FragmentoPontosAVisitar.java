@@ -36,12 +36,7 @@ public class FragmentoPontosAVisitar extends Fragment {
 
 /*
     Context x;
-    String[] nomesLocais;
-    String[] descricao;
-    String[] morada;
     */
-    String[] img = new String[15];
-    String[] hor = new String[15];
 
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
     String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};;
@@ -49,13 +44,14 @@ public class FragmentoPontosAVisitar extends Fragment {
 
     int[] imagens = {
             R.drawable.castelo,
-            R.drawable.palacio,
-            R.drawable.igreja
+            R.drawable.igreja,
+            R.drawable.palacio
     };
     int[] horarios = {
             R.drawable.h1,
-            R.drawable.h2,
-            R.drawable.h3};
+            R.drawable.h3,
+            R.drawable.h2
+    };
 
     int[] visita = {
             1,
@@ -135,11 +131,11 @@ public void requestLocalsServer(){
                         nomesLocais[i] = objeto.getString("nome");
                         descricao[i] = objeto.getString("descricao");
                         morada[i] = objeto.getString("endereco");
-                       img[i] = objeto.getString("imagem");
-                       hor[i] = objeto.getString("horario");
 
                        //este log escreve todos os objetos que o JSONarray tem
-                       Log.i("SERVER", json.getString(i));
+                        Log.i("NOME",  nomesLocais[i]);
+                        Log.i("DESCRICAO", descricao[i]);
+                        Log.i("MORADA", morada[i]);
                        //agora tens que atribuir os dados que veem do SERVER para o array que tens aqui
                     }
                     Log.i("RequestServer"," recebeste os dados");
