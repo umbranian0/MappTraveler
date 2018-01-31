@@ -1,6 +1,7 @@
 package com.example.vasil.mapptraveler;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,8 @@ public class FragmentMaisVisitados extends Fragment {
     ViewGroup v2;
     ListView lista2;
     Toolbar t;
+
+    Context x;
 
     String[] nomesLocais = {"Palacio", "Castelo", "Igreja"};
     String[] descricao = {"Descrição Palacio","Descrição Castelo",  "Descrição Igreja"};
@@ -56,7 +59,7 @@ public class FragmentMaisVisitados extends Fragment {
         lista2 = (ListView) view.findViewById(R.id.listaFragmentos2);
         v2 = container;
 
-        //x = this.getContext();
+        x = this.getContext();
 
         //requestLocalsServer(); //vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
 

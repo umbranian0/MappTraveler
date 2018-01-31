@@ -1,6 +1,7 @@
 package com.example.vasil.mapptraveler;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,12 +35,12 @@ public class FragmentoPontosAVisitar extends Fragment {
     ListView lista;
     Toolbar t;
 
-/*
+
     Context x;
-    */
+
 
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
-    String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};;
+    String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};
     String[] morada = {"Morada Castelo", "Morada Palacio", "Morada Igreja"};
 
     int[] imagens = {
@@ -71,22 +72,16 @@ public class FragmentoPontosAVisitar extends Fragment {
         View view= inflater.inflate(R.layout.fragment_fragmento_pontos_avisitar, container, false);
 
         //pedir request ao SERVIDOR
-        requestLocalsServer();
+
 
         lista = (ListView) view.findViewById(R.id.listaFragmentos);
 
         t = (Toolbar) view.findViewById(R.id.toolbar);
         v = container;
 
-        //x = this.getContext();
+        x = this.getContext();
 
-        //requestLocalsServer(); //vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
-
-        MyAdapter myAdapter = new MyAdapter(this.getContext(), nomesLocais, imagens, visita);
-
-        lista.setAdapter(myAdapter);
-
-
+        requestLocalsServer(); //vai buscar todos os dados a base de dados (EM DESENVOLVIMENTO) O PROGRAMA ESTÁ COMPLETO FALTA SÓ MESMO SUBSTITUIR OS VECTORES PELOS VECTORES DA BASE DE DADOS
 
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -125,6 +120,8 @@ public void requestLocalsServer(){
 
                     JSONArray json = new JSONArray((response));
 
+
+
                     for(int i = 0 ; i < json.length(); i++){
                         JSONObject objeto = (JSONObject) json.get(i);
 
@@ -136,9 +133,12 @@ public void requestLocalsServer(){
                         Log.i("NOME",  nomesLocais[i]);
                         Log.i("DESCRICAO", descricao[i]);
                         Log.i("MORADA", morada[i]);
-                       //agora tens que atribuir os dados que veem do SERVER para o array que tens aqui
                     }
                     Log.i("RequestServer"," recebeste os dados");
+
+                    MyAdapter myAdapter = new MyAdapter(x, nomesLocais, imagens, visita);
+
+                    lista.setAdapter(myAdapter);
 
                 } catch (JSONException e) {
 
