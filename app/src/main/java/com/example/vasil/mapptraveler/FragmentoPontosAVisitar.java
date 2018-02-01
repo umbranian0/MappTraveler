@@ -34,15 +34,10 @@ public class FragmentoPontosAVisitar extends Fragment {
     ViewGroup v;
     ListView lista;
     Toolbar t;
-
-
     Context x;
-
-
     String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
     String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};
     String[] morada = {"Morada Castelo", "Morada Palacio", "Morada Igreja"};
-
     int[] imagens = {
             R.drawable.castelo,
             R.drawable.igreja,
@@ -53,18 +48,16 @@ public class FragmentoPontosAVisitar extends Fragment {
             R.drawable.h3,
             R.drawable.h2
     };
-
     int[] visita = {
             1,
             0,
-            1};
-
-
+            1
+    };
+    //Atributos
 
     public FragmentoPontosAVisitar() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,8 +68,6 @@ public class FragmentoPontosAVisitar extends Fragment {
 
 
         lista = (ListView) view.findViewById(R.id.listaFragmentos);
-
-        t = (Toolbar) view.findViewById(R.id.toolbar);
         v = container;
 
         x = this.getContext();
@@ -95,7 +86,6 @@ public class FragmentoPontosAVisitar extends Fragment {
                 startActivity(nIntent);
             }
         });
-
 
         return view;
     }

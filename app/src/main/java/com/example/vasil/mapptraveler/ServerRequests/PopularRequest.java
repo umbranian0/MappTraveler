@@ -12,7 +12,7 @@ import java.util.Map;
  */
 
 public class PopularRequest extends StringRequest {
-    private static final String LOCATION_REQUEST_URL = "https://maapptraveler.000webhostapp.com/popularRequest.php";
+    private static final String LOCATION_REQUEST_URL = "https://maapptraveler.000webhostapp.com/listarPopulares.php";
 
     private Map<String , String> params;
 
