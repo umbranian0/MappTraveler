@@ -35,7 +35,7 @@ public class FragmentoPontosAVisitar extends Fragment {
     ListView lista;
     Toolbar t;
     Context x;
-    String[] nomesLocais = {"Castelo", "Palacio", "Igreja"};
+    String[] nomesLocais = {"Portas do sol", "Cidade Velha", "Igreja"};
     String[] descricao = {"Descrição Castelo", "Descrição Palacio", "Descrição Igreja"};
     String[] morada = {"Morada Castelo", "Morada Palacio", "Morada Igreja"};
     int[] imagens = {

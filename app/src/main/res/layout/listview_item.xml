@@ -4,29 +4,32 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff">
+    android:background="#d2d2ce">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:layout_marginVertical="7dp"
+        android:layout_gravity="center"
+        app:srcCompat="@android:drawable/btn_star" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginVertical="7dp"
         android:layout_marginLeft="7dp"
         app:srcCompat="@mipmap/ic_launcher" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="7dp"
-        app:srcCompat="@android:drawable/btn_star" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="Nome"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 </LinearLayout>
